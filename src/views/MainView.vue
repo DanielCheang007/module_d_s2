@@ -1,8 +1,10 @@
+<script setup>
+import GamesList from './games/GamesList.vue'
+</script>
+
 <template>
     <main>
-        This is the main body
-
-        <!-- <GamesList></GamesList> -->
+        <GamesList></GamesList>
     </main>
 </template>
 
