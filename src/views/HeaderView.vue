@@ -13,3 +13,26 @@
         </div>
     </header>
 </template>
+
+<style scoped>
+header {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    display: flex;
+}
+
+h1 {
+    border: 1px solid #ccc;
+    margin: 1rem 0;
+    padding: .5rem;
+}
+
+.user-utils {
+    margin-left: auto;
+}
+
+.user-utils nav {
+    display: flex;
+    gap: 0 .5rem;
+}
+</style>
