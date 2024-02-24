@@ -1,4 +1,5 @@
 <script setup>
+import GameItem from "./GameItem.vue"
 </script>
 
 <template>
@@ -18,6 +19,10 @@
                 <RouterLink to="/">DESC</RouterLink>
             </nav>
         </div>
+    </div>
+
+    <div class="page-content">
+        <GameItem v-for="i in 10"></GameItem>
     </div>
 </template>
 
@@ -48,10 +53,14 @@ nav a:last-child {
     border-bottom-right-radius: 5px;
 }
 
+.page-header,
+.page-content {
+    padding: 1rem;
+}
+
 .page-header {
     display: flex;
     font-size: smaller;
-    padding: 1rem;
 }
 
 .games-nav {
