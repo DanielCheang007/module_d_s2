@@ -1,37 +1,89 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import GameItem from "./GameItem.vue"
 
-const games = ref([])
 
-// TODO: A Page also a object
-const page = ref(0)
-const size = ref(10)
-const totalElements = ref(0)
-
-const loading = ref(true)
 
 const API_URL = import.meta.env.VITE_API_URL
 
-async function loadGames() {
+// TODO: A Page also a object
+
+// Current Page
+const currentPage = ref(0)
+
+// How many pages been loaded to the page
+const loadedPages = ref(0)
+
+// items per page
+const itemsPerPage = ref(10)
+
+// total items
+const totalElements = ref(0)
+
+const loading = ref(false)
+
+const games = ref([])
+
+async function loadGames(page = null) {
+    // void multiple loading
+    if (loading.value) return
+
     loading.value = true
 
-    const url = API_URL + '/games'
+    let url = API_URL + '/games'
+
+    if (page !== null) {
+        url += `?page=${page}&size=${itemsPerPage.value}`
+    }
 
     const res = await fetch(url)
     const data = await res.json()
 
-    page.value = data.page
-    size.value = data.size
+    currentPage.value = data.page
+    if (data.size > 0) {
+        itemsPerPage.value = data.size
+    }
     totalElements.value = data.totalElements
 
+    loadedPages.value = currentPage.value
+
     // TODO: suppose to convert to class?
-    games.value = data.content
+    // append only, don't replace
+    games.value.push(...data.content)
 
     loading.value = false
 }
 
 loadGames()
+
+
+// ---------------
+
+
+
+
+function onScroll() {
+    console.log('here')
+    const {
+        scrollTop,
+        scrollHeight,
+        clientHeight
+    } = document.documentElement
+
+    if (scrollTop + clientHeight >= scrollHeight - 5) {
+        console.log("this is the end...")
+        loadGames(loadedPages.value + 1)
+    }
+}
+
+onMounted(() => {
+    window.addEventListener("scroll", onScroll)
+})
+
+// remember to clear the listener!
+onBeforeUnmount(() => {
+    window.removeEventListener("scroll", onScroll)
+})
 
 </script>
 
@@ -55,10 +107,11 @@ loadGames()
     </div>
 
     <div class="page-content">
-        <div v-if="loading">Loading...</div>
-        <template v-else>
+        <template v-if="games.length > 0">
             <GameItem v-for="game in games" :key="game.slug" :game="game"></GameItem>
         </template>
+
+        <div v-if="loading">Loading...</div>
     </div>
 </template>
 
