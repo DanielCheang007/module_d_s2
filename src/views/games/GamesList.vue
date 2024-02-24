@@ -20,6 +20,9 @@ const itemsPerPage = ref(10)
 // total items
 const totalElements = ref(0)
 
+const sortBy = ref(null)
+const sortDir = ref(null)
+
 const loading = ref(false)
 
 const games = ref([])
@@ -30,11 +33,23 @@ async function loadGames(page = null) {
 
     loading.value = true
 
-    let url = API_URL + '/games'
-
-    if (page !== null) {
-        url += `?page=${page}&size=${itemsPerPage.value}`
+    // TODO: repalce with vue-router
+    const params = {
+        page,
+        size: itemsPerPage.value,
+        sortBy: sortBy.value,
+        sortDir: sortDir.value
     }
+
+    const paramsStr = Object.entries(params).map(([k, v]) => {
+        if (v !== null) {
+            return `${k}=${v}`
+        }
+    }).filter(v => v).join("&")
+
+    const url = API_URL + '/games?' + paramsStr
+
+    console.log(url)
 
     const res = await fetch(url)
     const data = await res.json()
@@ -59,9 +74,6 @@ loadGames()
 
 // ---------------
 
-
-
-
 function onScroll() {
     console.log('here')
     const {
@@ -85,6 +97,33 @@ onBeforeUnmount(() => {
     window.removeEventListener("scroll", onScroll)
 })
 
+
+// ---------------------
+
+function clearPage() {
+    games.value.splice(0)
+
+    currentPage.value = 0
+    itemsPerPage.value = 10
+    totalElements.value = 0
+
+    loadedPages.value = 0
+}
+
+function changeSortBy(val) {
+    clearPage()
+
+    sortBy.value = val
+    loadGames()
+}
+
+function changeSortDir(dir) {
+    clearPage()
+
+    sortDir.value = dir
+    loadGames()
+}
+
 </script>
 
 <template>
@@ -95,13 +134,18 @@ onBeforeUnmount(() => {
 
         <div class="games-nav">
             <nav>
-                <RouterLink to="/">Popurlarity</RouterLink>
+                <a @click.prevent="changeSortBy('popular')">Popurlarity</a>
+                <a @click.prevent="changeSortBy('uploaddate')">Recently Updated</a>
+                <a @click.prevent="changeSortBy('title')">Alphabetically</a>
+                <!-- <RouterLink to="/">Popurlarity</RouterLink>
                 <RouterLink to="/">Recently Updated</RouterLink>
-                <RouterLink to="/">Alphabetically</RouterLink>
+                <RouterLink to="/">Alphabetically</RouterLink> -->
             </nav>
             <nav>
-                <RouterLink to="/">ASC</RouterLink>
-                <RouterLink to="/">DESC</RouterLink>
+                <!-- <RouterLink to="/">ASC</RouterLink>
+                <RouterLink to="/">DESC</RouterLink> -->
+                <a @click.prevent="changeSortDir('asc')">ASC</a>
+                <a @click.prevent="changeSortDir('desc')">DESC</a>
             </nav>
         </div>
     </div>
