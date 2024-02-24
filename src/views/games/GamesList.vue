@@ -1,11 +1,44 @@
 <script setup>
+import { ref } from 'vue'
 import GameItem from "./GameItem.vue"
+
+const games = ref([])
+
+// TODO: A Page also a object
+const page = ref(0)
+const size = ref(10)
+const totalElements = ref(0)
+
+const loading = ref(true)
+
+const API_URL = import.meta.env.VITE_API_URL
+
+async function loadGames() {
+    loading.value = true
+
+    const url = API_URL + '/games'
+
+    const res = await fetch(url)
+    const data = await res.json()
+
+    page.value = data.page
+    size.value = data.size
+    totalElements.value = data.totalElements
+
+    // TODO: suppose to convert to class?
+    games.value = data.content
+
+    loading.value = false
+}
+
+loadGames()
+
 </script>
 
 <template>
     <div class="page-header">
         <h2>
-            654 Games available
+            {{ totalElements }} Games available
         </h2>
 
         <div class="games-nav">
@@ -22,7 +55,10 @@ import GameItem from "./GameItem.vue"
     </div>
 
     <div class="page-content">
-        <GameItem v-for="i in 10"></GameItem>
+        <div v-if="loading">Loading...</div>
+        <template v-else>
+            <GameItem v-for="game in games" :key="game.slug" :game="game"></GameItem>
+        </template>
     </div>
 </template>
 

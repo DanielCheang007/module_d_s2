@@ -1,22 +1,31 @@
+<script setup>
+defineProps(['game'])
+
+const BASE_URL = import.meta.env.VITE_BASE_URL
+
+function thumb(game) {
+    return BASE_URL + `/game/${game.slug}/thumbnail.png`
+}
+
+</script>
+
 <template>
     <div class="game">
         <div class="game-item-header">
             <div class="game-title">
-                Game Title A
+                {{ game.title }}
                 <span class="game-auther">
-                    by Dev #1
+                    by {{ game.author }}
                 </span>
             </div>
-            <div class="game-scores"># scores submitted: 6103</div>
+            <div class="game-scores"># scores submitted: {{ game.scoreCount }}</div>
         </div>
         <div class="game-item-body">
             <div class="game-thumbnail">
-                <img src="https://placehold.co/600x400" alt="game thumbnail">
+                <img :src="thumb(game)" alt="game thumbnail">
             </div>
             <div clsas="game-desc">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum tempore nam architecto incidunt similique
-                adipisci suscipit, placeat minima voluptas officia enim error assumenda in, iusto tenetur quaerat ab,
-                perferendis doloremque.
+                {{ game.description }}
             </div>
         </div>
     </div>
