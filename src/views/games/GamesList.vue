@@ -1,8 +1,9 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { useRoute } from 'vue-router'
 import GameItem from "./GameItem.vue"
 
-
+const route = useRoute()
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -20,8 +21,12 @@ const itemsPerPage = ref(10)
 // total items
 const totalElements = ref(0)
 
-const sortBy = ref(null)
-const sortDir = ref(null)
+// const sortBy = ref(null)
+// const sortDir = ref(null)
+
+// retrieve values from url `?sortBy=xx&sortDir=xx`
+const sortBy = computed(() => route.query.sortBy || 'popular')
+const sortDir = computed(() => route.query.sortDir || 'desc')
 
 const loading = ref(false)
 
@@ -42,7 +47,7 @@ async function loadGames(page = null) {
     }
 
     const paramsStr = Object.entries(params).map(([k, v]) => {
-        if (v !== null) {
+        if (v !== null && v !== undefined) {
             return `${k}=${v}`
         }
     }).filter(v => v).join("&")
@@ -110,19 +115,31 @@ function clearPage() {
     loadedPages.value = 0
 }
 
-function changeSortBy(val) {
+
+// function changeSortBy(val) {
+//     clearPage()
+
+//     sortBy.value = val
+//     loadGames()
+// }
+
+// function changeSortDir(dir) {
+//     clearPage()
+
+//     sortDir.value = dir
+//     loadGames()
+// }
+
+// watch the route changes, apply the loadGames function to retrieve new data
+watch(sortBy, () => {
     clearPage()
-
-    sortBy.value = val
     loadGames()
-}
+})
 
-function changeSortDir(dir) {
+watch(sortDir, () => {
     clearPage()
-
-    sortDir.value = dir
     loadGames()
-}
+})
 
 </script>
 
@@ -134,18 +151,18 @@ function changeSortDir(dir) {
 
         <div class="games-nav">
             <nav>
-                <a @click.prevent="changeSortBy('popular')">Popurlarity</a>
+                <!-- <a @click.prevent="changeSortBy('popular')">Popurlarity</a>
                 <a @click.prevent="changeSortBy('uploaddate')">Recently Updated</a>
-                <a @click.prevent="changeSortBy('title')">Alphabetically</a>
-                <!-- <RouterLink to="/">Popurlarity</RouterLink>
-                <RouterLink to="/">Recently Updated</RouterLink>
-                <RouterLink to="/">Alphabetically</RouterLink> -->
+                <a @click.prevent="changeSortBy('title')">Alphabetically</a> -->
+                <RouterLink :to="{path: 'games', query: {sortBy: 'popular', sortDir}}" :class="{active: sortBy === 'popular'}">Popurlarity</RouterLink>
+                <RouterLink :to="{path: 'games', query: {sortBy: 'uploaddate', sortDir}}" :class="{active: sortBy === 'uploaddate'}">Recently Updated</RouterLink>
+                <RouterLink :to="{path: 'games', query: {sortBy: 'title', sortDir}}" :class="{active: sortBy === 'title'}">Alphabetically</RouterLink>
             </nav>
             <nav>
-                <!-- <RouterLink to="/">ASC</RouterLink>
-                <RouterLink to="/">DESC</RouterLink> -->
-                <a @click.prevent="changeSortDir('asc')">ASC</a>
-                <a @click.prevent="changeSortDir('desc')">DESC</a>
+                <RouterLink :to="{path: 'games', query: {sortBy, sortDir: 'asc'}}"  :class="{active: sortDir === 'asc'}">ASC</RouterLink>
+                <RouterLink :to="{path: 'games', query: {sortBy, sortDir: 'desc'}}"  :class="{active: sortDir === 'desc'}">DESC</RouterLink>
+                <!-- <a @click.prevent="changeSortDir('asc')">ASC</a>
+                <a @click.prevent="changeSortDir('desc')">DESC</a> -->
             </nav>
         </div>
     </div>
@@ -174,6 +191,10 @@ nav a {
 nav a:hover {
     background: #ccc;
     text-decoration: none;
+}
+
+nav a.active {
+    background: #aaa;
 }
 
 nav a:first-child {
