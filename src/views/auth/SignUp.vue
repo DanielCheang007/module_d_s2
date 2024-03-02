@@ -9,47 +9,23 @@ const blankTmpl = {
     password: null
 }
 
-// validation setting
-const USERNAME_MIN = 4
-const USERNAME_MAX = 60
-const PASSWORD_MIN = 8
-const PASSWORD_MAX = 2 ** 16
+const errorBlankTmpl = {
+    username: null,
+    password: null,
+    base: null
+}
 
 const formData = ref({...blankTmpl})
 
-const errors = ref({...blankTmpl})
+const errors = ref({...errorBlankTmpl})
 
 const result = ref(null)
 
-function validate() {
-    const {username, password} = formData.value 
-    errors.value = {...blankTmpl}
-
-    // validation
-    if (!username || username.length < USERNAME_MIN) {
-        errors.value.username = `At least ${USERNAME_MIN} characters`
-    }
-
-    if (username && username.length > USERNAME_MAX) {
-        errors.value.username = `Maximum ${USERNAME_MAX} characters`
-    }
-
-    if (!password || password.length < PASSWORD_MIN) {
-        errors.value.password = `At least ${PASSWORD_MIN} characters`
-    }
-
-    if (password && password.length > PASSWORD_MAX) {
-        errors.value.password = `Maximum ${PASSWORD_MAX} characters`
-    }
-
-    // if any error occurs, validation failed.
-    return (!errors.value.username && !errors.value.password) 
-}
-
 async function signup() {
-    if (!validate()) return false
-
     if (!confirm("Are you sure?")) return false
+
+    // clear error messages
+    errors.value = {...errorBlankTmpl}
 
     const url = API_URL + '/auth/signup'
 
@@ -62,8 +38,15 @@ async function signup() {
         body: JSON.stringify(formData.value)
     })
 
-    result.value = await res.json()
-    
+    const json = await res.json()
+
+    if (json.status === 'invalid') {
+        errors.value.base = json?.message
+        errors.value.username = json?.violations?.username?.message
+        errors.value.password = json?.violations?.password?.message
+    }
+
+    result.value = json
 
     formData.value = {...blankTmpl}
 }
@@ -82,17 +65,18 @@ async function signup() {
             {{ result }}
         </div>
         <form @submit.prevent.stop="signup">
+            <div class="error">{{ errors.base }}</div>
             <div>
                 <label>
                     <span>@</span>
-                    <input type="text" placeholder="username" @input="validate" v-model="formData.username">
+                    <input type="text" placeholder="username" v-model="formData.username">
                 </label>
                 <div class="error">{{ errors.username }}</div>
             </div>
             <div class="field">
                 <label>
                     <span>#123</span>
-                    <input type="password" placeholder="password" @input="validate" v-model="formData.password">
+                    <input type="password" placeholder="password" v-model="formData.password">
                 </label>
                 <div class="error">{{ errors.password }}</div>
             </div>
