@@ -19,6 +19,9 @@ export const useUserStore = defineStore('user', () => {
   function signout() {
     user.value = null
     token.value = null
+
+    localStorage.removeItem('username')
+    localStorage.removeItem('token')
   }
 
   async function signinUser(username, token) {
