@@ -1,6 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 
+import { useUserStore } from '@/stores/user.js'
+
+const userStore = useUserStore()
+const { signinUser } = userStore
+
 const API_URL = import.meta.env.VITE_API_URL
 
 // blank template for form and error messge
@@ -34,6 +39,8 @@ async function signin() {
 
     if (json.status === 'invalid') {
         errors.value = json?.message
+    } else if (json.status === 'success') {
+        signinUser(formData.value.username, json.token)
     }
 
     result.value = json

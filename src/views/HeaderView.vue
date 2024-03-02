@@ -1,4 +1,10 @@
 <script setup>
+import { storeToRefs } from 'pinia'
+import { useUserStore } from '@/stores/user.js'
+
+const userStore = useUserStore()
+const { signout } = userStore
+const { user, isUserSignedIn } = storeToRefs(userStore)
 </script>
 
 <template>
@@ -10,7 +16,11 @@
         </h1>
 
         <div class="user-utils">
-            <nav>
+            <nav v-if="isUserSignedIn">
+                <span>{{ user.username }}</span>
+                <a href="" @click.prevent="signout()">Sign Out</a>
+            </nav>
+            <nav v-else>
                 <RouterLink to="/sign_up">Sign Up</RouterLink>
                 <RouterLink to="/sign_in">Sign In</RouterLink>
             </nav>
