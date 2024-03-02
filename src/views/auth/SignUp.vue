@@ -1,0 +1,5 @@
+<template>
+    <div class="page-header">
+        <h1>Sign Up</h1>
+    </div>
+</template>

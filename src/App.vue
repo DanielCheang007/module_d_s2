@@ -6,7 +6,13 @@ import HeaderView from './views/HeaderView.vue';
 
 <template>
   <HeaderView></HeaderView>
-  <RouterView />
+  <main>
+    <RouterView />
+  </main>
 </template>
 
-<style scoped></style>
+<style scoped>
+main {
+  border: 1px solid #ccc;
+}
+</style>

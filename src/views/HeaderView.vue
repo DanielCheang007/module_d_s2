@@ -3,12 +3,16 @@
 
 <template>
     <header>
-        <h1>WorldSkills: Games</h1>
+        <h1>
+            <RouterLink to="/">
+                WorldSkills: Games
+            </RouterLink>
+        </h1>
 
         <div class="user-utils">
             <nav>
-                <RouterLink to="/">Sign Up</RouterLink>
-                <RouterLink to="/about">Sign In</RouterLink>
+                <RouterLink to="/sign_up">Sign Up</RouterLink>
+                <RouterLink to="/sign_in">Sign In</RouterLink>
             </nav>
         </div>
     </header>

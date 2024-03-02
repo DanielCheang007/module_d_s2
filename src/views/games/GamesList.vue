@@ -186,16 +186,6 @@ nav a:last-child {
     border-bottom-right-radius: 5px;
 }
 
-.page-header,
-.page-content {
-    padding: 1rem;
-}
-
-.page-header {
-    display: flex;
-    font-size: smaller;
-}
-
 .games-nav {
     margin-left: auto;
     display: flex;
