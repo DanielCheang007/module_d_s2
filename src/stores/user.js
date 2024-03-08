@@ -47,5 +47,5 @@ export const useUserStore = defineStore('user', () => {
     loading.value = false
   }
 
-  return { user, loading, signinUser, isUserSignedIn, signout }
+  return { user, token, loading, signinUser, isUserSignedIn, signout }
 })

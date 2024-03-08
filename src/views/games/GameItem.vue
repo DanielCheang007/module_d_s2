@@ -13,7 +13,9 @@ function thumb(game) {
     <div class="game">
         <div class="game-item-header">
             <div class="game-title">
-                {{ game.title }}
+                <router-link :to="`/game/${game.slug}`">
+									{{ game.title }}
+								</router-link>
                 <span class="game-auther">
                     by {{ game.author }}
                 </span>
