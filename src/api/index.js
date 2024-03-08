@@ -11,6 +11,24 @@ async function getJSON(url) {
   }
 }
 
+async function getAuthJSON(url) {
+  const userStore = useUserStore()
+
+  const res = await fetch(API_URL + url, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${userStore.token}`
+    }
+  })
+
+  const data = await res.json()
+  return {
+    ok: res.ok,
+    status: res.status,
+    data
+  }
+}
+
 async function postJSON(url, data) {
   const res = await fetch(API_URL + url, {
     method: 'POST',
@@ -48,4 +66,4 @@ async function postAuthJSON(url, data) {
   }
 }
 
-export { getJSON, postJSON, postAuthJSON }
+export { getJSON, getAuthJSON, postJSON, postAuthJSON }
