@@ -25,6 +25,11 @@ const router = createRouter({
       component: () => import('../views/games/GameView.vue')
     },
     {
+      path: '/game/:slug/manage',
+      name: 'manage_game',
+      component: () => import('../views/games/ManageGame.vue')
+    },
+    {
       path: '/profile',
       name: 'profile',
       component: () => import('../views/auth/UserProfile.vue')

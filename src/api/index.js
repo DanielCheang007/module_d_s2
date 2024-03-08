@@ -66,4 +66,16 @@ async function postAuthJSON(url, data) {
   }
 }
 
-export { getJSON, getAuthJSON, postJSON, postAuthJSON }
+async function postHTML(url, formData) {
+  const res = await fetch(API_URL + url, {
+    method: 'POST',
+    body: formData
+  })
+
+  return {
+    ok: res.ok,
+    status: res.status
+  }
+}
+
+export { getJSON, getAuthJSON, postJSON, postAuthJSON, postHTML }

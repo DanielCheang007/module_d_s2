@@ -4,8 +4,9 @@ defineProps(['game'])
 const BASE_URL = import.meta.env.VITE_BASE_URL
 
 function thumb(game) {
-	return BASE_URL + `/game/${game.slug}/thumbnail.png`
+	return BASE_URL + `/game/${game.slug}/thumbnail.png?v=${new Date().getTime()}`
 }
+
 
 </script>
 
@@ -13,11 +14,11 @@ function thumb(game) {
 	<div class="game">
 		<div class="game-item-header">
 			<div class="game-title">
-				<router-link :to="`/game/${game.slug}/manage`">
+				<span>
 					{{ game.title }}
-				</router-link>
+				</span>
+				<button>Edit</button>
 			</div>
-			<div class="game-scores"># scores submitted: {{ game.scoreCount }}</div>
 		</div>
 		<div class="game-item-body">
 			<div class="game-thumbnail">
@@ -25,6 +26,9 @@ function thumb(game) {
 			</div>
 			<div clsas="game-desc">
 				{{ game.description }}
+			</div>
+			<div>
+				<button>Edit</button>
 			</div>
 		</div>
 	</div>
