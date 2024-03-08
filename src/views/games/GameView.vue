@@ -2,16 +2,11 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { storeToRefs } from 'pinia'
-import { useUserStore } from '@/stores/user.js'
-
-const userStore = useUserStore()
-const { token } = storeToRefs(userStore)
+import { getJSON, postAuthJSON } from '@/api'
 
 const route = useRoute()
 const slug = computed(() => route.params.slug)
 
-const API_URL = import.meta.env.VITE_API_URL
 const BASE_URL = import.meta.env.VITE_BASE_URL
 
 const loading = ref(false)
@@ -21,18 +16,17 @@ const scores = ref(null)
 const gameUrl = computed(() => BASE_URL + '/game/' + slug.value + '/index.html')
 
 async function loadScores() {
-	const url = API_URL + '/games/' + slug.value + '/scores'
-	const res = await fetch(url)
-	const jsonData = await res.json()
-	scores.value = jsonData.scores
+	const url = `/games/${slug.value}/scores`
+	const res = await getJSON(url)
+	scores.value = res.data.scores
 }
 
 async function loadGameDetails() {
 	loading.value = true
-	const url = API_URL + '/games/' + slug.value
-	const res = await fetch(url)
-	game.value = await res.json()
-	console.log(game.value)
+
+	const url = `/games/${slug.value}`
+	const res = await getJSON(url)
+	game.value = res.data
 
 	await loadScores()
 
@@ -40,22 +34,11 @@ async function loadGameDetails() {
 }
 
 async function postSocre(score) {
-	const url = `${API_URL}/games/${slug.value}/scores`
-
-	const res = await fetch(url, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			"Authorization": `Bearer ${token.value}`,
-		},
-		body: JSON.stringify({ score })
-	})
-
-	if (res.ok) {
-		loadScores()
-	}
-
+	const url = `/games/${slug.value}/scores`
+	const res = await postAuthJSON(url, { score })
 	console.log(res)
+
+	if (res.ok) loadScores()
 }
 
 function observeGame(event) {
