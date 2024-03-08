@@ -24,16 +24,16 @@ export const useUserStore = defineStore('user', () => {
     localStorage.removeItem('token')
   }
 
-  async function signinUser(username, token) {
+  async function signinUser(username, _token) {
     loading.value = true
     const url = API_URL + `/users/${username}`
 
     console.log(url)
     const res = await fetch(url, {
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-        }
+      headers: {
+        Authorization: `Bearer ${_token}`,
+        'Content-Type': 'application/json'
+      }
     })
 
     const json = await res.json()
@@ -41,8 +41,9 @@ export const useUserStore = defineStore('user', () => {
     console.log(json)
 
     // store token to localStorage
+    token.value = _token
     localStorage.setItem('username', username)
-    localStorage.setItem('token', token)
+    localStorage.setItem('token', _token)
 
     loading.value = false
   }
